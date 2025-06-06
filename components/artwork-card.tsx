@@ -51,10 +51,12 @@ export function ArtworkCard({ artwork }: ArtworkCardProps) {
             <Link href={`/artwork/${artwork.id}`}>
                 <div className="relative aspect-square">
                     <Image
-                        src={artwork.imageUrl}
+                        src={artwork.imageUrl.startsWith('http') ? artwork.imageUrl : `${window.location.origin}${artwork.imageUrl}`}
                         alt={artwork.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover"
+                        priority={false}
                     />
                 </div>
             </Link>

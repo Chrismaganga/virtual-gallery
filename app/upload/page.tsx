@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -40,6 +41,7 @@ export default function UploadPage() {
     const { data: session } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,8 +100,13 @@ export default function UploadPage() {
     if (!session) {
         return (
             <div className="text-center">
-                <h1 className="text-2xl font-bold mb-4">Please sign in to upload artwork</h1>
-                <Button onClick={() => router.push("/login")}>Sign In</Button>
+                <h1 className="text-2xl font-bold mb-4 text-blue-950">Please sign in to upload artwork</h1>
+                <Button
+                    onClick={() => router.push("/login")}
+                    className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white ring-2 ring-blue-500/20 hover:ring-blue-500/40 transition-all duration-300"
+                >
+                    Sign In
+                </Button>
             </div>
         );
     }
@@ -107,8 +114,10 @@ export default function UploadPage() {
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="space-y-2">
-                <h1 className="text-3xl font-bold">Upload Artwork</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-950 to-blue-800 bg-clip-text text-transparent">
+                    Upload Artwork
+                </h1>
+                <p className="text-blue-950/70">
                     Share your artwork with the world
                 </p>
             </div>
@@ -117,7 +126,10 @@ export default function UploadPage() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <div className="space-y-4">
                         <UploadButton
-                            onUploadComplete={(url) => setImageUrl(url)}
+                            onUploadComplete={(url) => {
+                                setImageUrl(url);
+                                setPreviewUrl(url.startsWith('http') ? url : `${window.location.origin}${url}`);
+                            }}
                             onUploadError={(error) => {
                                 toast({
                                     title: "Error",
@@ -126,6 +138,18 @@ export default function UploadPage() {
                                 });
                             }}
                         />
+
+                        {previewUrl && (
+                            <div className="relative aspect-square w-full max-w-md mx-auto rounded-lg overflow-hidden border-2 border-blue-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                                <Image
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    fill
+                                    className="object-contain"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <FormField
@@ -133,9 +157,13 @@ export default function UploadPage() {
                         name="title"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Title</FormLabel>
+                                <FormLabel className="text-blue-950">Title</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter artwork title" {...field} />
+                                    <Input
+                                        placeholder="Enter artwork title"
+                                        {...field}
+                                        className="border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -147,11 +175,11 @@ export default function UploadPage() {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Description</FormLabel>
+                                <FormLabel className="text-blue-950">Description</FormLabel>
                                 <FormControl>
                                     <Textarea
                                         placeholder="Describe your artwork"
-                                        className="resize-none"
+                                        className="resize-none border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                                         {...field}
                                     />
                                 </FormControl>
@@ -165,13 +193,13 @@ export default function UploadPage() {
                         name="galleryId"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Gallery</FormLabel>
+                                <FormLabel className="text-blue-950">Gallery</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
                                 >
                                     <FormControl>
-                                        <SelectTrigger>
+                                        <SelectTrigger className="border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300">
                                             <SelectValue placeholder="Select a gallery" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -190,11 +218,12 @@ export default function UploadPage() {
                         name="tags"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Tags</FormLabel>
+                                <FormLabel className="text-blue-950">Tags</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder="Enter tags separated by commas"
                                         {...field}
+                                        className="border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -202,7 +231,11 @@ export default function UploadPage() {
                         )}
                     />
 
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white ring-2 ring-blue-500/20 hover:ring-blue-500/40 transition-all duration-300"
+                        disabled={isLoading}
+                    >
                         {isLoading ? "Uploading..." : "Upload Artwork"}
                     </Button>
                 </form>

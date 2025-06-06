@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -9,22 +11,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 
-export default function Navbar() {
+export function Navbar() {
     const { data: session } = useSession();
 
     return (
         <nav className="border-b">
-            <div className="container mx-auto px-4 py-4">
-                <div className="flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold">
-                        Virtual Gallery
+            <div className="flex h-16 items-center px-4 container mx-auto">
+                <Link href="/" className="font-bold text-xl">
+                    Virtual Gallery
+                </Link>
+                <div className="ml-auto flex items-center space-x-4">
+                    <Link href="/explore">
+                        <Button variant="ghost">Explore</Button>
                     </Link>
-
-                    <div className="flex items-center gap-4">
-                        <Link href="/explore" className="hover:text-primary">
-                            Explore
-                        </Link>
-                        {session ? (
+                    {session ? (
+                        <>
+                            <Link href="/upload">
+                                <Button>Upload Artwork</Button>
+                            </Link>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="icon">
@@ -36,30 +40,22 @@ export default function Navbar() {
                                         <Link href="/profile">Profile</Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href="/my-galleries">My Galleries</Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/upload">Upload Artwork</Link>
+                                        <Link href="/settings">Settings</Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         onClick={() => signOut()}
                                         className="text-red-600"
                                     >
-                                        Sign Out
+                                        Sign out
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <Link href="/login">
-                                    <Button variant="ghost">Sign In</Button>
-                                </Link>
-                                <Link href="/register">
-                                    <Button>Sign Up</Button>
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                        </>
+                    ) : (
+                        <Link href="/auth/signin">
+                            <Button>Sign in</Button>
+                        </Link>
+                    )}
                 </div>
             </div>
         </nav>

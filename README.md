@@ -49,7 +49,7 @@ A modern web application for artists to showcase their work and connect with art
 3. Set up environment variables:
    Create a `.env` file in the root directory with the following variables:
    ```
-   DATABASE_URL="postgresql://username:password@localhost:5432/virtual_gallery"
+   DATABASE_URL="postgresql://postgres.lrejltretohsyjhqvhos:REAL@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
    NEXTAUTH_SECRET="your-secret-key"
    NEXTAUTH_URL="http://localhost:3000"
    ```
@@ -99,3 +99,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Next.js team for the amazing framework
 - Prisma team for the excellent ORM
 - The open-source community for their contributions
+
+
+<!-- cml -->
+sudo -u postgres createuser -s chris
+createdb virtual_gallery
+cat .env
+
+REAL

@@ -33,7 +33,7 @@ export default function ExplorePage() {
                 page: pageParam.toString(),
                 limit: "12",
                 ...(search && { search }),
-                ...(tag && { tag }),
+                ...(tag && tag !== "all" && { tag }),
             });
 
             const response = await fetch(`/api/artwork?${params}`);
@@ -81,20 +81,20 @@ export default function ExplorePage() {
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row gap-4">
-                <form onSubmit={handleSearch} className="flex-1">
+                <form onSubmit={handleSearch} className="flex-1 max-w-md">
                     <Input
                         placeholder="Search artworks..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full"
+                        className="w-full border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                     />
                 </form>
                 <Select value={tag} onValueChange={setTag}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-[180px] border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300">
                         <SelectValue placeholder="Filter by tag" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Tags</SelectItem>
+                        <SelectItem value="all">All Tags</SelectItem>
                         <SelectItem value="digital">Digital Art</SelectItem>
                         <SelectItem value="painting">Painting</SelectItem>
                         <SelectItem value="photography">Photography</SelectItem>
@@ -117,6 +117,7 @@ export default function ExplorePage() {
                         onClick={() => fetchNextPage()}
                         disabled={isFetchingNextPage}
                         variant="outline"
+                        className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white ring-2 ring-blue-500/20 hover:ring-blue-500/40 transition-all duration-300"
                     >
                         {isFetchingNextPage ? "Loading more..." : "Load more"}
                     </Button>
@@ -131,8 +132,8 @@ export default function ExplorePage() {
 
             {data?.pages[0].artworks.length === 0 && (
                 <div className="text-center py-8">
-                    <h2 className="text-2xl font-bold">No artworks found</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-2xl font-bold text-blue-950">No artworks found</h2>
+                    <p className="text-blue-950/70">
                         Try adjusting your search or filters
                     </p>
                 </div>

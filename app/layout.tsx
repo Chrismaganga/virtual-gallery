@@ -4,7 +4,8 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/toaster";
-import Navbar from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,13 +24,14 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryProvider>
           <AuthProvider>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background flex flex-col">
               <Navbar />
-              <main className="container mx-auto px-4 py-8">
+              <main className="container mx-auto px-4 py-8 flex-grow">
                 {children}
               </main>
+              <Footer />
             </div>
-            <Toaster />
+            <Toaster position="top-right" />
           </AuthProvider>
         </QueryProvider>
       </body>

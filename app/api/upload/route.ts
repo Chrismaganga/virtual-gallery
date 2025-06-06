@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
+import { existsSync } from "fs";
 
 export async function POST(req: Request) {
   try {
@@ -26,6 +27,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Only image files are allowed" },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -34,8 +43,13 @@ export async function POST(req: Request) {
     const extension = file.name.split(".").pop();
     const filename = `${uniqueId}.${extension}`;
 
-    // Save file
+    // Ensure uploads directory exists
     const uploadDir = join(process.cwd(), "public", "uploads");
+    if (!existsSync(uploadDir)) {
+      await mkdir(uploadDir, { recursive: true });
+    }
+
+    // Save file
     const filepath = join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
